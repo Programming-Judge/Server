@@ -26,10 +26,17 @@ func Register(ctx *gin.Context) {
 
 func Login(ctx *gin.Context) {
 	user := new(store.User)
-	if err := ctx.Bind(user); err != nil {
+	username := ctx.PostForm("username")
+	pass := ctx.PostForm("password")
+
+	user.Username = username
+	user.Password = pass
+
+	/*	if user, err := ctx.FormFile(); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
+	} */
+
 	user, err := store.Authenticate(user.Username, user.Password)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Sign in failed."})
