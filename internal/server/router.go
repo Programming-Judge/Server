@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,16 +8,17 @@ import (
 
 func CORS_Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Authorization, Accept-Encoding, X-CSRF-Token, accept, origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+		//c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		c.Writer.Header().Set("OptionsPassthrough", "true")
 
-		/*
-			if c.Request.Method == "OPTIONS" {
-				c.AbortWithStatus(204)
-				return
-			}*/
+		/*if c.Request.Method == "OPTIONS" {
+			log.Print("got here")
+			c.Status(200)
+		}*/
 
 		c.Next()
 	}
@@ -36,7 +36,6 @@ func setRouter() *gin.Engine {
 	}
 
 	router.NoRoute(func(ctx *gin.Context) {
-		log.Print("here")
 		ctx.JSON(http.StatusNotFound, gin.H{})
 	})
 
