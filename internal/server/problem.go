@@ -38,7 +38,7 @@ func View(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg":  "Posts fetched successfully.",
+		"msg":  "Problem fetched successfully.",
 		"data": qs,
 	})
 }

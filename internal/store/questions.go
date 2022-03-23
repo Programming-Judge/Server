@@ -15,7 +15,7 @@ type Question struct {
 func AddQuestion(qs *Question) error {
 	_, err := db.Model(qs).Returning("*").Insert()
 	if err != nil {
-		log.Printf("Error inserting new post")
+		log.Printf("Error inserting new question")
 	}
 	return err
 }
@@ -25,7 +25,7 @@ func FetchQuestion(id int) (*Question, error) {
 	qs.ID = id
 	err := db.Model(qs).WherePK().Select()
 	if err != nil {
-		log.Printf("Error fetching post")
+		log.Printf("Error fetching question")
 		return nil, err
 	}
 	return qs, nil
