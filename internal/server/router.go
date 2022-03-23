@@ -35,6 +35,12 @@ func setRouter() *gin.Engine {
 		auth.POST("/login", Login)
 	}
 
+	problem := router.Group("/problem")
+	{
+		problem.POST("/create", Create)
+		problem.GET("/view/:id", View)
+	}
+
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{})
 	})
