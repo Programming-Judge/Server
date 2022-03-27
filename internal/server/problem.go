@@ -42,3 +42,16 @@ func View(ctx *gin.Context) {
 		"data": qs,
 	})
 }
+
+func ViewAll(ctx *gin.Context) {
+
+	questions, err := store.FetchQuestions()
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "Problems fetched successfully.",
+		"data": questions,
+	})
+}

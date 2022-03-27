@@ -39,6 +39,7 @@ func setRouter() *gin.Engine {
 	{
 		problem.POST("/create", Create)
 		problem.GET("/view/:id", View)
+		problem.GET("/view", ViewAll)
 	}
 
 	router.NoRoute(func(ctx *gin.Context) {
