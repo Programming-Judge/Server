@@ -30,3 +30,26 @@ func FetchQuestion(id int) (*Question, error) {
 	}
 	return qs, nil
 }
+
+func DeleteQuestion(id int) error {
+	qs := new(Question)
+	qs.ID = id
+
+	//check if question is present
+	err := db.Model(qs).WherePK().Select()
+	if err != nil {
+		log.Printf("Error: Question does not exist")
+		return err
+	}
+
+	//delete question
+	res, err := db.Model(qs).WherePK().Delete()
+	if err != nil {
+		log.Printf("Error: Could not delete question")
+		return err
+	}
+
+	//print number of rows affected
+	log.Println("Deleted ", res.RowsAffected(), "row(s)")
+	return nil
+}
