@@ -58,7 +58,6 @@ func Delete(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg":  "Deleted from Problemset.",
-		"data": id,
+		"msg": "Deleted from Problemset.",
 	})
 }
