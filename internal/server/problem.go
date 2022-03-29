@@ -42,3 +42,22 @@ func View(ctx *gin.Context) {
 		"data": qs,
 	})
 }
+
+func Delete(ctx *gin.Context) {
+	paramID := ctx.Param("id")
+	id, err := strconv.Atoi(paramID)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Not valid ID."})
+		return
+	}
+
+	if err := store.DeleteQuestion(id); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "Deleted from Problemset.",
+	})
+}
