@@ -24,6 +24,7 @@ func FetchQuestion(id int) (*Question, error) {
 	qs := new(Question)
 	qs.ID = id
 	err := db.Model(qs).WherePK().Select()
+	db.Model(qs).Update()
 	if err != nil {
 		log.Printf("Error fetching question")
 		return nil, err
