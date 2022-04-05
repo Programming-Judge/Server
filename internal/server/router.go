@@ -41,6 +41,7 @@ func setRouter() *gin.Engine {
 		problem.GET("/view/:id", View)
 		problem.GET("/view", ViewAll)
 		problem.DELETE("/delete/:id", Delete)
+		problem.PUT("/update/:id", Update)
 	}
 
 	router.NoRoute(func(ctx *gin.Context) {

@@ -31,15 +31,33 @@ func FetchQuestion(id int) (*Question, error) {
 	return qs, nil
 }
 
-
 func FetchQuestions() ([]Question, error) {
 	var questions []Question
-	err := db.Model(&questions).Select();
+	err := db.Model(&questions).Select()
 	if err != nil {
 		log.Printf("Error fetching questions")
 		return nil, err
 	}
 	return questions, nil
+}
+
+func UpdateQuestion(id int, title, description string) error {
+	qs := new(Question)
+	qs.ID = id
+	err := db.Model(qs).WherePK().Select()
+	if err != nil {
+		log.Printf("Error: Question does not exist")
+		return err
+	}
+	qs.Description = description
+	qs.Title = title
+	res, err := db.Model(qs).WherePK().UpdateNotZero()
+	if err != nil {
+		log.Printf("Error: Could not Update question")
+		return err
+	}
+	log.Println("Updated ", res.RowsAffected(), "row(s)")
+	return nil
 }
 
 func DeleteQuestion(id int) error {

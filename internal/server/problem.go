@@ -43,6 +43,25 @@ func View(ctx *gin.Context) {
 	})
 }
 
+func Update(ctx *gin.Context) {
+	paramID := ctx.Param("id")
+	title := ctx.Param("Title")
+	description := ctx.Param("Description")
+	id, err := strconv.Atoi(paramID)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Not valid ID."})
+		return
+	}
+
+	if err := store.UpdateQuestion(id, title, description); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "Problem Updated",
+	})
+}
+
 func Delete(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 	id, err := strconv.Atoi(paramID)
