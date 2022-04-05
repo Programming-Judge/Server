@@ -31,6 +31,17 @@ func FetchQuestion(id int) (*Question, error) {
 	return qs, nil
 }
 
+
+func FetchQuestions() ([]Question, error) {
+	var questions []Question
+	err := db.Model(&questions).Select();
+	if err != nil {
+		log.Printf("Error fetching questions")
+		return nil, err
+	}
+	return questions, nil
+}
+
 func DeleteQuestion(id int) error {
 	qs := new(Question)
 	qs.ID = id
