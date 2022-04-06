@@ -42,6 +42,7 @@ func setRouter() *gin.Engine {
 		problem.GET("/view", ViewAll)
 		problem.DELETE("/delete/:id", Delete)
 		problem.PUT("/update/:id", Update)
+		problem.POST("submit", Submit)
 	}
 
 	router.NoRoute(func(ctx *gin.Context) {

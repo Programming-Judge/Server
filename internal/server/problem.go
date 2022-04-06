@@ -45,8 +45,8 @@ func View(ctx *gin.Context) {
 
 func Update(ctx *gin.Context) {
 	paramID := ctx.Param("id")
-	title := ctx.Param("Title")
-	description := ctx.Param("Description")
+	title := ctx.PostForm("Title")
+	description := ctx.PostForm("Description")
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Not valid ID."})
