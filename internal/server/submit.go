@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/Programming-Judge/Server/internal/store"
@@ -15,7 +14,7 @@ import (
 )
 
 func Submit(ctx *gin.Context) {
-	file, err := ctx.FormFile("code")
+	file, err := ctx.FormFile("code_file")
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -27,14 +26,14 @@ func Submit(ctx *gin.Context) {
 	codeFile := strings.Replace(newFileName, "-", "", -1)
 	fmt.Println(codeFile)
 	// The file is received, so let's save it
-	if err := ctx.SaveUploadedFile(file, fmt.Sprintf("./uploads/%s", codeFile)); err != nil {
+	if err := ctx.SaveUploadedFile(file, fmt.Sprintf("../Storage/uploads/%s", codeFile)); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"message": "Unable to save the file",
 		})
 		return
 	}
 
-	filename := uniqueName
+	/*filename := uniqueName
 	language := extension
 	question := ctx.PostForm("QuestionID")
 	user := ctx.PostForm("UserID")
@@ -47,7 +46,7 @@ func Submit(ctx *gin.Context) {
 
 	go SendEvaluator(question, filename, language, tl, ml, qsID, userID)
 	fmt.Println(filename)
-	fmt.Println(language)
+	fmt.Println(language)*/
 	// File saved successfully. Return proper result
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Your file has been successfully uploaded.",
