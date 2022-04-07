@@ -23,8 +23,9 @@ func Submit(ctx *gin.Context) {
 	extension := filepath.Ext(file.Filename)
 	uniqueName := uuid.New().String()
 	newFileName := uniqueName + extension
+	// To remove '-' in file name
 	codeFile := strings.Replace(newFileName, "-", "", -1)
-	fmt.Println(codeFile)
+	//fmt.Println(codeFile)
 	// The file is received, so let's save it
 	if err := ctx.SaveUploadedFile(file, fmt.Sprintf("../Storage/uploads/%s", codeFile)); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -33,7 +34,7 @@ func Submit(ctx *gin.Context) {
 		return
 	}
 
-	/*filename := uniqueName
+	/*filename := codeFile
 	language := extension
 	question := ctx.PostForm("QuestionID")
 	user := ctx.PostForm("UserID")
