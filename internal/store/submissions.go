@@ -12,7 +12,7 @@ type Submission struct {
 }
 
 func AddSubmission(filename, language, username string, status, qsID int) error {
-	sub := Submission{
+	sub := &Submission{
 		FileName:   filename,
 		UserName:   username,
 		Status:     status,
@@ -22,7 +22,7 @@ func AddSubmission(filename, language, username string, status, qsID int) error 
 
 	_, err := db.Model(sub).Returning("*").Insert()
 	if err != nil {
-		log.Printf("Error inserting new submission")
+		log.Printf("Error inserting new submission" , err)
 	}
 	return err
 }

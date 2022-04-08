@@ -8,11 +8,14 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"io/ioutil" 
+	"encoding/json"
 
 	"github.com/Programming-Judge/Server/internal/store"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
+
 
 func Submit(ctx *gin.Context) {
 	qsNO := ctx.PostForm("id")
@@ -23,8 +26,10 @@ func Submit(ctx *gin.Context) {
 	}
 
 	extension := filepath.Ext(file.Filename)
+	
 	uniqueName := uuid.New().String()
 	newFileName := uniqueName + extension
+	extension = extension[1:]
 	// To remove '-' in file name
 	codeFile := strings.Replace(newFileName, "-", "", -1)
 	//fmt.Println(codeFile)
@@ -54,25 +59,32 @@ func Submit(ctx *gin.Context) {
 
 func SendEvaluator(filename, language, tl, ml, qsNO string, qsID int) {
 	params := url.Values{}
-	params.Add("id", qsNO)
-	params.Add("filename", filename)
-	params.Add("lang", language)
-	params.Add("timelimit", tl)
-	params.Add("memorylimit", ml)
+	// params.Add("id", qsNO)
+	// params.Add("filename", filename)
+	// params.Add("lang", language)
+	// params.Add("timelimit", tl)
+	// params.Add("memorylimit", ml)
 	body := strings.NewReader(params.Encode())
-
-	req, _ := http.NewRequest("GET", "localhost:7070/submit/eval", body)
+	url := "http://localhost:7070/submit/eval?"+"id="+qsNO+"&filename="+filename+"&lang="+language+"&timelimit="+tl+"s&memorylimit="+ml+"mb"
+	req, _ := http.NewRequest("GET", url,body )
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Print("Error in response from evaluator")
+		log.Println("Error in response from evaluator", err)
 		return
 	}
 	defer resp.Body.Close()
-	//b, err := ioutil.ReadAll(resp.Body)
-	//bodyString := string(b)
+	b, err := ioutil.ReadAll(resp.Body)
+	x := map[string]string{}
+
+	if err := json.Unmarshal(b, &x); err != nil {  // Parse []byte to the go struct pointer
+        fmt.Println("Can not unmarshal JSON")
+   }
+
+    fmt.Println(x["message"])
+
 	status := 1
 	username := "JohnDoe"
 	if err := store.AddSubmission(filename, language, username, status, qsID); err != nil {
