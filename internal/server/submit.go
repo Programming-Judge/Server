@@ -1,21 +1,20 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"io/ioutil" 
-	"encoding/json"
 
 	"github.com/Programming-Judge/Server/internal/store"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
-
 
 func Submit(ctx *gin.Context) {
 	qsNO := ctx.PostForm("id")
@@ -26,7 +25,7 @@ func Submit(ctx *gin.Context) {
 	}
 
 	extension := filepath.Ext(file.Filename)
-	
+
 	uniqueName := uuid.New().String()
 	newFileName := uniqueName + extension
 	extension = extension[1:]
@@ -47,8 +46,9 @@ func Submit(ctx *gin.Context) {
 	qs, _ := store.FetchQuestion(qsID)
 	tl := strconv.Itoa(qs.TimeLimit)
 	ml := strconv.Itoa(qs.MemoryLimit)
+	qsname := qs.Title
 
-	go SendEvaluator(filename, language, tl, ml, qsNO, qsID)
+	go SendEvaluator(filename, language, tl, ml, qsNO, qsname, qsID)
 	//fmt.Println(filename)
 	//fmt.Println(language)
 	// File saved successfully. Return proper result
@@ -57,7 +57,7 @@ func Submit(ctx *gin.Context) {
 	})
 }
 
-func SendEvaluator(filename, language, tl, ml, qsNO string, qsID int) {
+func SendEvaluator(filename, language, tl, ml, qsNO, qsname string, qsID int) {
 	params := url.Values{}
 	// params.Add("id", qsNO)
 	// params.Add("filename", filename)
@@ -65,8 +65,8 @@ func SendEvaluator(filename, language, tl, ml, qsNO string, qsID int) {
 	// params.Add("timelimit", tl)
 	// params.Add("memorylimit", ml)
 	body := strings.NewReader(params.Encode())
-	url := "http://localhost:7070/submit/eval?"+"id="+qsNO+"&filename="+filename+"&lang="+language+"&timelimit="+tl+"s&memorylimit="+ml+"mb"
-	req, _ := http.NewRequest("GET", url,body )
+	url := "http://localhost:7070/submit/eval?" + "id=" + qsNO + "&filename=" + filename + "&lang=" + language + "&timelimit=" + tl + "s&memorylimit=" + ml + "mb"
+	req, _ := http.NewRequest("GET", url, body)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -79,15 +79,15 @@ func SendEvaluator(filename, language, tl, ml, qsNO string, qsID int) {
 	b, err := ioutil.ReadAll(resp.Body)
 	x := map[string]string{}
 
-	if err := json.Unmarshal(b, &x); err != nil {  // Parse []byte to the go struct pointer
-        fmt.Println("Can not unmarshal JSON")
-   }
+	if err := json.Unmarshal(b, &x); err != nil { // Parse []byte to the go struct pointer
+		fmt.Println("Can not unmarshal JSON")
+	}
 
-    fmt.Println(x["message"])
+	fmt.Println(x["message"])
 
-	status := 1
+	status := x["message"]
 	username := "JohnDoe"
-	if err := store.AddSubmission(filename, language, username, status, qsID); err != nil {
+	if err := store.AddSubmission(filename, language, username, status, qsname); err != nil {
 		log.Print("Error in adding submission to database")
 		return
 	}
