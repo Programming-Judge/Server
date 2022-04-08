@@ -12,9 +12,9 @@ func init() {
 		_, err := db.Exec(`CREATE TABLE submissions(
       	id SERIAL PRIMARY KEY,
 		file_name TEXT NOT NULL,
-		question_name TEXT NOT NULL,
 		user_name TEXT NOT NULL,
-      	status TEXT NOT,
+		question_name TEXT NOT NULL,
+      	status TEXT NOT NULL,
       	language TEXT NOT NULL
     )`)
 		return err
