@@ -5,18 +5,18 @@ import "log"
 type Submission struct {
 	ID         int
 	FileName   string
+	UserName   string
 	Status     int
 	Language   string
-	UserID     int
 	QuestionID int
 }
 
-func AddSubmission(filename, language string, status, qsID, userID int) error {
+func AddSubmission(filename, language, username string, status, qsID int) error {
 	sub := Submission{
 		FileName:   filename,
+		UserName:   username,
 		Status:     status,
 		Language:   language,
-		UserID:     userID,
 		QuestionID: qsID,
 	}
 

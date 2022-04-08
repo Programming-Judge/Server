@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/Programming-Judge/Server/internal/store"
@@ -14,6 +15,7 @@ import (
 )
 
 func Submit(ctx *gin.Context) {
+	qsNO := ctx.PostForm("id")
 	file, err := ctx.FormFile("code_file")
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -34,29 +36,25 @@ func Submit(ctx *gin.Context) {
 		return
 	}
 
-	/*filename := codeFile
+	filename := codeFile
 	language := extension
-	question := ctx.PostForm("QuestionID")
-	user := ctx.PostForm("UserID")
-	qsID, _ := strconv.Atoi(question)
-	userID, _ := strconv.Atoi(user)
-
+	qsID, _ := strconv.Atoi(qsNO)
 	qs, _ := store.FetchQuestion(qsID)
 	tl := strconv.Itoa(qs.TimeLimit)
 	ml := strconv.Itoa(qs.MemoryLimit)
 
-	go SendEvaluator(question, filename, language, tl, ml, qsID, userID)
-	fmt.Println(filename)
-	fmt.Println(language)*/
+	go SendEvaluator(filename, language, tl, ml, qsNO, qsID)
+	//fmt.Println(filename)
+	//fmt.Println(language)
 	// File saved successfully. Return proper result
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Your file has been successfully uploaded.",
 	})
 }
 
-func SendEvaluator(question, filename, language, tl, ml string, qsID, userID int) {
+func SendEvaluator(filename, language, tl, ml, qsNO string, qsID int) {
 	params := url.Values{}
-	params.Add("id", question)
+	params.Add("id", qsNO)
 	params.Add("filename", filename)
 	params.Add("lang", language)
 	params.Add("timelimit", tl)
@@ -76,8 +74,8 @@ func SendEvaluator(question, filename, language, tl, ml string, qsID, userID int
 	//b, err := ioutil.ReadAll(resp.Body)
 	//bodyString := string(b)
 	status := 1
-
-	if err := store.AddSubmission(filename, language, status, qsID, userID); err != nil {
+	username := "JohnDoe"
+	if err := store.AddSubmission(filename, language, username, status, qsID); err != nil {
 		log.Print("Error in adding submission to database")
 		return
 	}
